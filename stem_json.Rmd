@@ -52,6 +52,11 @@ q10<-one_question(84, 'Part5_Q2')
 q11<-one_question(93, 'Part5_Q3')
 
 all_tb <- rbind(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11)
+valid_tb <- all_tb %>%
+  filter(!grepl("NP|B", hs.scale)) %>%
+  filter(!is.na(hs.scale))
+
+write_csv(valid_tb, 'hscore/hs_tidy.csv')
 
 ```
 
