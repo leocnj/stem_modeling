@@ -1,0 +1,62 @@
+---
+title: "stem_json"
+author: "Lei Chen"
+date: "2/15/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(magrittr)
+library(dplyr)
+```
+
+## Introduction
+
+## Human scores
+```{r load_hs}
+hs<-read_excel('hscore/CBAL_2015.xlsx')
+# trick http://bit.ly/2lA0ZJp for dealing with duplicated colnames
+hs2 <- hs %>%
+    setNames(make.unique(names(.)))
+names(hs2)
+```
+
+```{r tidy}
+n_row = dim(hs2)[1]
+new_cols<-c('ID', 'FileName', 'TimeSpent', 'Image', 'Text',
+            'hs.scale', 'hs.material', 'hs.behavior', 'hs.distribution', 'hs.lp')
+
+one_question <- function(idx, Q_token){
+  cols = c(1, idx:(idx+8))
+  
+  part <- hs2 %>%
+    select(cols) %>%
+    set_colnames(new_cols) %>%
+    add_column(Question = rep(Q_token, n_row))
+  return(part)
+}
+
+q1<-one_question(3, 'Part1_Q1')
+q2<-one_question(12, 'Part1_Q3')
+q3<-one_question(21, 'Part1_Q4')
+q4<-one_question(30, 'Part2_Q16')
+q5<-one_question(39, 'Part3_Q10')
+q6<-one_question(48, 'Part3_Q12')
+q7<-one_question(57, 'Part4_Q5')
+q8<-one_question(66, 'Part4_Q7')
+q9<-one_question(75, 'Part5_Q1')
+q10<-one_question(84, 'Part5_Q2')
+q11<-one_question(93, 'Part5_Q3')
+
+all_tb <- rbind(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11)
+
+```
+
+```{r cars}
+feat<-read.csv('features/extracted_features.csv')
+names(feat)
+
+```
