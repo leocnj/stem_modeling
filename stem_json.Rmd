@@ -11,6 +11,7 @@ library(tidyverse)
 library(readxl)
 library(magrittr)
 library(dplyr)
+library(stringr)
 ```
 
 ## Introduction
@@ -60,8 +61,42 @@ write_csv(valid_tb, 'hscore/hs_tidy.csv')
 
 ```
 
-```{r cars}
-feat<-read.csv('features/extracted_features.csv')
-names(feat)
+
+```{r count_wrds}
+# compute num of words from Text
+valid_tb <- valid_tb %>%
+  mutate(wds=str_count(Text, "\\S+"))
+
+#library(ggplot2)
+#ggplot(valid_tb, aes(hs.scale, wds)) +
+#  geom_line(aes(group = Question)) +
+#  geom_point(aes(colour = Question))
+```
+
+Loading counting features and conduct correlation analysis
+```{r counting_features}
+cnt_feats <- read.csv('features/counting_features.csv')
+# names(cnt_feats)
+
+# 580230-CMS60000702-S_OCEANWATER_SP13_01_03_M
+id_2_fname <- function(id_str){
+  id_rept <- "\\d+-(\\w+)-S_OCEANWATER_SP13_0?(\\d+)_0?(\\d+)"
+  tks <- str_match(id_str, id_rept)
+  fname <- paste(tks[2], tks[3], tks[4], sep='_')
+  fname
+  
+}
+
+# id_str <- "580230-CMS60000702-S_OCEANWATER_SP13_01_03_M"
+# foo <- id_2_fname(id_str)
+# foo
+
+cnt_feats <- cnt_feats %>%
+  mutate(FileName=lapply(id, id_2_fname))
+
+feats_score <- merge(cnt_feats, valid_tb, by="FileName", sort = F)
 
 ```
+
+
+
