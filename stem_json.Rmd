@@ -12,6 +12,7 @@ library(readxl)
 library(magrittr)
 library(dplyr)
 library(stringr)
+library(tibble)
 ```
 
 ## Introduction
@@ -96,7 +97,19 @@ cnt_feats <- cnt_feats %>%
 
 feats_score <- merge(cnt_feats, valid_tb, by="FileName", sort = F)
 
+chr2num <- function(chr){
+  return(as.numeric(as.factor(chr)))
+}
+
+feats_score[11:15] <- lapply(feats_score[11:15], chr2num)
+cor(feats_score[3:6], feats_score[11:15], use="complete.obs")
+
 ```
 
+```{r ggplot2}
+ggplot(feats_score, aes(x=hs.behavior, y=log(num_arrows + 1))) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth()   # Add a loess smoothed fit curve with confidence region
+```
 
 
