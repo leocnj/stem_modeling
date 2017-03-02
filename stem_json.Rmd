@@ -63,7 +63,7 @@ write_csv(valid_tb, 'hscore/hs_tidy.csv')
 ```
 
 
-```{r count_wrds}
+```{r comb_feat_score, results="asis"}
 # compute num of words from Text
 valid_tb <- valid_tb %>%
   mutate(wds=str_count(Text, "\\S+"))
@@ -102,14 +102,41 @@ chr2num <- function(chr){
 }
 
 feats_score[11:15] <- lapply(feats_score[11:15], chr2num)
-cor(feats_score[3:6], feats_score[11:15], use="complete.obs")
+corr_tb <- cor(feats_score[3:6], feats_score[11:15], use="complete.obs")
+corr_tb
 
 ```
 
 ```{r ggplot2}
-ggplot(feats_score, aes(x=hs.behavior, y=log(num_arrows + 1))) +
+ggplot(feats_score, aes(x=hs.behavior, y=log(num_arrows + 1)         )) +
     geom_point(shape=1) +    # Use hollow circles
-    geom_smooth()   # Add a loess smoothed fit curve with confidence region
+    geom_smooth(method=lm)   # Add a loess smoothed fit curve with confidence region
 ```
 
+Fore each human score, check four counting features' correlation patterns.
+```{r each_score}
+# wide to long for plot multiple lines
+long_tb <- feats_score %>%
+  gather(`micro_obj_types`, `micro_obj_color_types`, `macro_obj_types`, `num_arrows`, key='feature', value='value')
+
+ggplot(long_tb, aes(x=hs.scale, y=log(value+1), group=feature, colour=feature)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm)   # 
+
+ggplot(long_tb, aes(x=hs.material, y=log(value+1), group=feature, colour=feature)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm)   # 
+
+ggplot(long_tb, aes(x=hs.behavior, y=log(value+1), group=feature, colour=feature)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm)   # 
+
+ggplot(long_tb, aes(x=hs.distribution, y=log(value+1), group=feature, colour=feature)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm)   # 
+
+ggplot(long_tb, aes(x=hs.lp, y=log(value+1), group=feature, colour=feature)) +
+    geom_point(shape=1) +    # Use hollow circles
+    geom_smooth(method=lm)   # 
+```
 
