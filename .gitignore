@@ -36,3 +36,5 @@ vignettes/*.pdf
 hscore/CBAL_2015.xlsx
 
 stem_json.html
+
+*.jpeg
