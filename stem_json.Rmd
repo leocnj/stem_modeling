@@ -76,7 +76,7 @@ valid_tb <- valid_tb %>%
 
 Loading counting features and conduct correlation analysis
 ```{r counting_features}
-cnt_feats <- read.csv('features/counting_features.csv')
+cnt_feats <- read.csv('features/features_v2_june30.csv')
 # names(cnt_feats)
 
 # 580230-CMS60000702-S_OCEANWATER_SP13_01_03_M
@@ -101,10 +101,11 @@ chr2num <- function(chr){
   return(as.numeric(as.factor(chr)))
 }
 
-feats_score[11:15] <- lapply(feats_score[11:15], chr2num)
-corr_tb <- cor(feats_score[3:6], feats_score[11:15], use="complete.obs")
-corr_tb
-
+feats_score[15:19] <- lapply(feats_score[15:19], chr2num)
+corr_tb <- cor(feats_score[3:10], feats_score[15:19], use="complete.obs")
+require(knitr)
+kable(corr_tb, caption='Pearson correaltions between drawing features and human scores')
+write.csv(corr_tb, "corr_result.csv")
 ```
 
 ```{r ggplot2}
